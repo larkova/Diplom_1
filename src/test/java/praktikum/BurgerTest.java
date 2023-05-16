@@ -10,6 +10,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+
 
 @RunWith(MockitoJUnitRunner.class)
 public class BurgerTest {
@@ -17,32 +19,45 @@ public class BurgerTest {
     Bun bun;
     @Mock
     Ingredient ingredient;
-    @Mock
-    Burger burger;
 
     @Test
     public void setBunsReturnBuns() {
+        Burger burger = new Burger();
         Bun bun = new Bun("test", 344);
         burger.setBuns(bun);
-        Mockito.verify(burger).setBuns(bun);
+        Bun actualBun = burger.bun;
+        assertEquals(bun, actualBun);
     }
     @Test
     public void addIngredientReturnIngredientOfBurger(){
-        Ingredient ingredient=new Ingredient(IngredientType.SAUCE, "test", 333);
+        Burger burger = new Burger();
         burger.addIngredient(ingredient);
-        Mockito.verify(burger).addIngredient(ingredient);
+        List<Ingredient> actualIngredients = burger.ingredients;
+        List<Ingredient> expectedIngredients = new ArrayList<>();
+        expectedIngredients.add(ingredient);
+        assertEquals(expectedIngredients, actualIngredients);
     }
     @Test
     public void removeIngredientReturnIndexOfIngredient() {
-        burger.removeIngredient(2);
-        Mockito.verify(burger).removeIngredient(2);
+        Burger burger = new Burger();
+        Ingredient ingredient = new Ingredient(IngredientType.SAUCE, "hot sauce", 100);
+        burger.addIngredient(ingredient);
+        burger.removeIngredient(0);
+        int actualSize = burger.ingredients.size();
+        assertEquals(0, actualSize);
 
     }
     @Test
     public void moveIngredientReturnIndexOfIngredient() {
-        burger.moveIngredient(2, 1);
-        Mockito.verify(burger).moveIngredient(2, 1);
+        Burger burger = new Burger();
+        Ingredient ingredient=new Ingredient(IngredientType.SAUCE, "hot sauce", 100);
+        Ingredient newIngredient=new Ingredient(IngredientType.FILLING, "hot sauce", 100);
+        burger.addIngredient(ingredient);
+        burger.addIngredient(newIngredient);
+        burger.moveIngredient(0, 1);
+        Ingredient actualIngredient = burger.ingredients.get(1);
 
+        assertEquals(ingredient, actualIngredient);
     }
 
     @Test
@@ -51,7 +66,7 @@ public class BurgerTest {
         Mockito.when(bun.getPrice()).thenReturn(200F);
         Mockito.when(ingredient.getPrice()).thenReturn(300F);
         burger.addIngredient(ingredient);
-        Assert.assertEquals(700, burger.getPrice(), 0);
+        assertEquals(700, burger.getPrice(), 0);
 
     }
 
@@ -72,9 +87,7 @@ public class BurgerTest {
         receipt.append(String.format("(==== %s ====)%n", bun.getName()));
         receipt.append(String.format("%nPrice: %f%n", burger.getPrice()));
 
-        System.out.println(burger.getReceipt());
-
-        Assert.assertEquals("(==== test ====)\n" +
+        assertEquals("(==== test ====)\n" +
                 "= sauce test2 =\n" +
                 "(==== test ====)\n" +
                 "\n" +
